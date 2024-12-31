@@ -1,0 +1,46 @@
+name: Reusable Backend CI
+
+on:
+  workflow_call:
+    secrets:
+      token:
+        required: true
+    inputs:
+      java_version:
+        required: false
+        type: string
+        default: '17'
+      
+
+
+jobs:
+  run-common-unit-tests:
+    name: 'Run Backend CI'
+    runs-on: ubuntu-latest    
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java_version }}
+
+      - name: Clean Task & Run Test
+        run: ./gradlew clean test        
+
+      - name: Test Coverage Report 🦞
+        if: ${{ github.event_name == 'pull_request' }}
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          paths: |
+            ${{ github.workspace }}/**/build/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.token }}
+          fail-emoji: 😵
+          pass-emoji: ✅
+          min-coverage-overall: 1
+          title: Code Coverage
+          update-comment: true

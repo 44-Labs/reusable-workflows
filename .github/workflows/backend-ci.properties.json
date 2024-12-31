@@ -1,0 +1,6 @@
+{
+    "name": "Reusable Backend CI Workflow",
+    "description": "44Labs Organization Backend CI workflow template.",
+    "iconName": "octicon workflow",
+    "categories": ["Spring Boot", "CI"]
+}
